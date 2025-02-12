@@ -1,0 +1,145 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.regex.*;
+import java.util.*;
+
+public class Main extends Application {
+
+    private TabPane tabPane;
+    private File currentFile;
+    private CodeArea currentEditor;
+
+    private static final String KEYWORDS = "\\b(?:if|else|for|while|int|double|public|private|class|static|void)\\b";
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        BorderPane layout = new BorderPane();
+
+        // MenuBar and Toolbar (as before)
+        MenuBar menuBar = createMenuBar(primaryStage);
+        HBox toolBar = createToolBar();
+
+        // Project Explorer (File Tree)
+        TreeView<String> fileTree = createFileTree(primaryStage);
+
+        // Editor setup
+        tabPane = new TabPane();
+        layout.setCenter(tabPane);
+
+        // Set layout structure
+        VBox topLayout = new VBox(menuBar, toolBar);
+        layout.setTop(topLayout);
+        layout.setLeft(fileTree);
+
+        // Status Bar
+        Label statusLabel = new Label("Ready");
+        layout.setBottom(statusLabel);
+
+        // Scene
+        Scene scene = new Scene(layout, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("ProjectFlux IDE");
+        primaryStage.show();
+    }
+
+    private MenuBar createMenuBar(Stage primaryStage) {
+        // MenuBar code as before...
+    }
+
+    private HBox createToolBar() {
+        // ToolBar code as before...
+    }
+
+    private TreeView<String> createFileTree(Stage primaryStage) {
+        // File Tree code as before...
+    }
+
+    private StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Matcher matcher = Pattern.compile(KEYWORDS).matcher(text);
+        StyleSpansBuilder<Collection<String>> styleSpansBuilder = new StyleSpansBuilder<>();
+
+        int lastKwEnd = 0;
+        while (matcher.find()) {
+            styleSpansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+            styleSpansBuilder.add(Collections.singleton("keyword"), matcher.end() - matcher.start());
+            lastKwEnd = matcher.end();
+        }
+        styleSpansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+
+        return styleSpansBuilder.create();
+    }
+
+    private void createNewFile() {
+        Tab newTab = new Tab("Untitled");
+        currentEditor = new CodeArea();
+        currentEditor.setStyleSpans(0, computeHighlighting(currentEditor.getText()));
+        currentEditor.textProperty().addListener((observable, oldValue, newValue) -> {
+            currentEditor.setStyleSpans(0, computeHighlighting(newValue));
+        });
+        newTab.setContent(currentEditor);
+        tabPane.getTabs().add(newTab);
+        currentFile = null; // No file associated yet
+    }
+
+    private void openFile(Stage primaryStage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.java"));
+        File selectedFile = fileChooser.showOpenDialog(primaryStage);
+
+        if (selectedFile != null) {
+            Tab openTab = new Tab(selectedFile.getName());
+            currentEditor = new CodeArea();
+            try {
+                currentEditor.replaceText(0, 0, new String(Files.readAllBytes(selectedFile.toPath())));
+                currentEditor.setStyleSpans(0, computeHighlighting(currentEditor.getText()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            openTab.setContent(currentEditor);
+            tabPane.getTabs().add(openTab);
+            currentFile = selectedFile;
+        }
+    }
+
+    private void saveFile(boolean saveAs) {
+        if (currentFile == null || saveAs) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.java"));
+            File file = fileChooser.showSaveDialog(null);
+            if (file != null) {
+                currentFile = file;
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile))) {
+                    writer.write(currentEditor.getText());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile))) {
+                writer.write(currentEditor.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void closeFile() {
+        if (tabPane.getTabs().size() > 0) {
+            tabPane.getTabs().remove(tabPane.getSelectionModel().getSelectedIndex());
+            currentFile = null;
+        }
+    }
+}
