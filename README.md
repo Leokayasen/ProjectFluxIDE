@@ -1,15 +1,22 @@
 # Project Flux
 
-## What is this?
+## What is this?\
 It's a very WIP custom IDE for personal use.
 
-## Will there be public access?
-I intend to make this open source (of course, otherwise why put it on GitHub?).
+## Can I be a tester?\
+You are welcome to fork this repository for your own use, as explained by the copyright license.\
+This includes testing and modding to your own wishes.
 
-## Can I be a tester?
-I have no plans on a release or test phase for this yet.
+- - -
 
-This project is more of a slow, "when-I-can-be-bothered" thing.
+## Roadmap for Project Flux\
+
+| Version | Date |
+| --- | --- |
+| `v0.1-alpha` | 28.2.2025 |
+| `v0.1` | 9.8.2025 |
+| `v0.5` | n/a |
+| `v1.0` | n/a |
 
 - - -
 
