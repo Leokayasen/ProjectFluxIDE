@@ -1,0 +1,60 @@
+.code-editor {
+    -fx-background-color: #252526;
+    -fx-text-fill: whitesmoke;
+}
+
+.root {
+    -fx-background-color: darkslategray;
+}
+
+.menu-bar {
+    -fx-background-color: #333;
+}
+
+.menu-button {
+    -fx-background-color: lightgray;
+    -fx-text-fill: black;
+}
+
+
+.tree-view {
+    -fx-background-color: #2d2d30;
+    -fx-text-fill: #d4d4d4;
+}
+
+.tree-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d4d4d4;
+}
+
+.tree-cell:selected {
+    -fx-background-color: #007acc;
+}
+
+
+.keyword {
+    -fx-fill: #d73a49;
+    -fx-font-weight: bold;
+}
+
+.comment {
+    -fx-fill: #6a747d;
+    -fx-font-style: italic;
+}
+
+.string {
+    -fx-fill: #032f62;
+
+}
+
+.number {
+    -fx-fill: #005cc5;
+}
+
+.operator {
+    -fx-fill: #e36209;
+}
+
+.annotation {
+    -fx-fill: #22863a;
+}

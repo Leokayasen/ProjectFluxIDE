@@ -11,6 +11,8 @@ module com.bitwave.projectflux {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires org.fxmisc.richtext;
+    requires java.desktop;
+    requires wellbehavedfx;
 
     opens com.bitwave.projectflux to javafx.fxml;
     exports com.bitwave.projectflux;
